@@ -2,6 +2,6 @@
 
 
 def get(s):
-    if (s is None):
+    if s is None:
         return 0
     return len(s)
