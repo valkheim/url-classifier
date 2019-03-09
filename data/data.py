@@ -38,8 +38,8 @@ class Data:
         except FileNotFoundError:
             remote = "http://s3.amazonaws.com/alexa-static/top-1m.csv.zip"
             df = pd.read_csv(remote, compression='zip', header=None)
+            df.to_csv(local, sep=',', encoding='utf-8', header=None, index=False)
         else:
             df = pd.read_csv(local, header=None)
 
         self.data["top-1m"] = dict(map(reversed, dict(df.values).items()))
-        df.to_csv(local, sep=',', encoding='utf-8', index=False)
