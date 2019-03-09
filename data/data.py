@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 
 
@@ -15,21 +16,31 @@ class Data:
     def _get_unsafe_urls(self):
         print("Retrieve unsafe urls database")
 
-        infile = "http://data.phishtank.com/data/online-valid.csv"
-        outfile = "./data/unsafe.csv"
+        location_on_disk = "./data/unsafe.csv"
+        try:
+            Path(location_on_disk).resolve(strict=True)
+        except FileNotFoundError:
+            infile = "http://data.phishtank.com/data/online-valid.csv"
+            df = pd.read_csv(infile)
+            df = df[df['verified'] == 'yes']
+            df = df[df['online'] == 'yes']
+            df['url'].to_csv(location_on_disk, sep=',', encoding='utf-8', header=False,
+                             index=False)
+        else:
+            df = pd.read_csv(location_on_disk)
+        self.data["unsafe"] = df.iloc[:,0].values
 
-        df = pd.read_csv(infile)
-        df = df[df['verified'] == 'yes']
-        df = df[df['online'] == 'yes']
-        df['url'].to_csv(outfile, sep=',', encoding='utf-8', header=False,
-                         index=False)
 
     def _get_top_1_million(self):
         print("Retrieve top 1 million websites database")
+        location_on_disk = "./data/top-1m.csv"
+        try:
+            Path(location_on_disk).resolve(strict=True)
+        except FileNotFoundError:
+            distant_file = "http://s3.amazonaws.com/alexa-static/top-1m.csv.zip"
+            df = pd.read_csv(infile, compression='zip', header=None)
+        else:
+            df = pd.read_csv(location_on_disk, header=None)
 
-        infile = "http://s3.amazonaws.com/alexa-static/top-1m.csv.zip"
-        outfile = "./data/top-1m.csv"
-
-        df = pd.read_csv(infile, compression='zip', header=None)
         self.data["top-1m"] = dict(map(reversed, dict(df.values).items()))
-        df.to_csv(outfile, sep=',', encoding='utf-8', index=False)
+        df.to_csv(location_on_disk, sep=',', encoding='utf-8', index=False)
