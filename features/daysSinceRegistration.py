@@ -8,7 +8,7 @@ def get(address):
         return None
     try:
         creation = whois.whois(address).creation_date
-    except BaseException: # non existent domain raises an exception
+    except BaseException:  # non existent domain raises an exception
         return None
     if creation is None:
         return None
