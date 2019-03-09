@@ -29,16 +29,16 @@ class Processor(data.Data):
              |   +-- url length
              +-- label (0: safe, 1: unsafe)
         """
-        dataset_list = []
+        dataset = []
         for url in self.get_data()["unsafe"][:100]:
             fn = features.Features(url)
-            dataset_list.append(fn.get(1))
+            dataset.append(fn.get(1))
         for url in self.get_data()["safe"][:100]:
             fn = features.Features(url)
-            dataset_list.append(fn.get(0))
-        self._df = pd.DataFrame(dataset_list, columns=features.Features().get_header())
+            dataset.append(fn.get(0))
+        self._df = pd.DataFrame(dataset, columns=features.Features().get_header())
 
     def _save_dataset(self):
         print("Save url dataset")
         path = "./data/dataset.csv"
-        self._df.to_csv(path, sep=',', encoding='utf-8', header=None, index=False)
+        self._df.to_csv(path, sep=',', encoding='utf-8', header=True, index=False)
