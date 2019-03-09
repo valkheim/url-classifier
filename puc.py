@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 from features import *
-from data import data
+from data import *
 from features import top1m
 
 if __name__ == "__main__":
-    dt = data.Data()
-    print(top1m.get("http://google.com", dt.data))
+    p = processor.Processor()
+    #d = p.get_data()
+    #print(top1m.get("http://google.com", d))

@@ -3,15 +3,20 @@ import pandas as pd
 
 
 class Data:
-    data = {}
 
+    # give what to init as paramter
     def __init__(self):
         print("Init Data class")
+        self._data = {}
         self._get_raw_datasets()
+
+    def get_data(self):
+        return self._data
 
     def _get_raw_datasets(self):
         self._get_unsafe_urls()
         self._get_top_1_million()
+        self._get_safe_urls()
 
     def _get_unsafe_urls(self):
         print("Retrieve unsafe urls database")
@@ -28,7 +33,11 @@ class Data:
                              header=False, index=False)
         else:
             df = pd.read_csv(local)
-        self.data["unsafe"] = df.iloc[:, 0].values
+        self._data["unsafe"] = df.iloc[:, 0].values
+
+    def _get_safe_urls(self):
+        print("Retrieve safe urls database")
+        self._data["safe"] = list(self._data["top-1m"].keys())
 
     def _get_top_1_million(self):
         print("Retrieve top 1 million websites database")
@@ -42,4 +51,4 @@ class Data:
         else:
             df = pd.read_csv(local, header=None)
 
-        self.data["top-1m"] = dict(map(reversed, dict(df.values).items()))
+        self._data["top-1m"] = dict(map(reversed, dict(df.values).items()))
