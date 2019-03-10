@@ -12,7 +12,7 @@ class Processor(data.Data):
         if fname is not None:
             self._load_dataset(fname)
         else:
-            self._generate_dataset(100)
+            self._generate_dataset(10)
             self._save_dataset()
 
     def _load_dataset(self, fname):
@@ -44,6 +44,8 @@ class Processor(data.Data):
             fn = features.Features(url)
             dataset.append(fn.get(0))
         self._df = pd.DataFrame(dataset, columns=features.Features().get_header())
+        # fix missing values
+        self._df['days_since_registration'].fillna(self._df['days_since_registration'].mean(), inplace=True)
 
     def _save_dataset(self):
         print("Save url dataset")

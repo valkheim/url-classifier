@@ -64,6 +64,11 @@ class Visualizer:
         X_train, X_test, y_train, y_test = \
             train_test_split(X, y, test_size=.4, random_state=42)
 
+        print("X_train",X_train.shape)
+        print("X_test",X_test.shape)
+        print("y_train",y_train.shape)
+        print("y_test",y_test.shape)
+
         x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
         y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
         xx, yy = np.meshgrid(np.arange(x_min, x_max, .02),
@@ -92,6 +97,7 @@ class Visualizer:
         for name, clf in zip(names, classifiers):
             ax = plt.subplot(1, len(classifiers) + 1, plot_index)
             clf.fit(X_train, y_train)
+            # score is a shortcut to predict/calculate accuracy
             score = clf.score(X_test, y_test)
 
 
@@ -100,6 +106,7 @@ class Visualizer:
 
             # Plot the decision boundary. For that, we will assign a color to each
             # point in the mesh [x_min, x_max]x[y_min, y_max].
+            # https://stackoverflow.com/questions/29948156/scitkit-learn-query-data-dimension-must-match-training-data-dimension?rq=1
             if hasattr(clf, "decision_function"):
                 Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
             else:

@@ -8,10 +8,12 @@ class Features:
     def get(self, label):
         return [label,
                 f.length.get(self._url),
+                f.daysSinceRegistration.get(self._url),
                 f.subdomains.get(self._url)]
 
     @staticmethod
     def get_header():
         return ['label',
                 'length',
+                'days_since_registration',
                 'subdomains']
