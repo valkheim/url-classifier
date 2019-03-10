@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
 from data import data
 from features import features
 
@@ -48,8 +50,15 @@ class Processor(data.Data):
         path = "./data/dataset.csv"
         self._df.to_csv(path, sep=',', encoding='utf-8', header=True, index=False)
 
+    def _preprocess(self, X, y):
+        # Remove variable colineraity
+        # rng = np.random.RandomState(2)
+        # X += 2 * rng.uniform(size=X.shape)
+        X = StandardScaler().fit_transform(X)
+        return X, y
+
     def get(self):
         header = features.Features().get_header()
         X = self._df[header[1::]].to_numpy().astype(float)
         y = self._df[header[0]].to_numpy().astype(float)
-        return X, y
+        return self._preprocess(X, y)

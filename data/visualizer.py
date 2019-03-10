@@ -5,7 +5,6 @@ from matplotlib import cm
 from pandas.plotting import scatter_matrix
 from matplotlib.colors import ListedColormap
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_moons, make_circles, make_classification
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -59,13 +58,8 @@ class Visualizer:
             GaussianNB(),
             QuadraticDiscriminantAnalysis()]
 
-# Remove variable colineraity
-#        rng = np.random.RandomState(2)
-#        X += 2 * rng.uniform(size=X.shape)
+        plt.figure(figsize=(20, 3))
 
-        figure = plt.figure(figsize=(20, 3))
-
-        X = StandardScaler().fit_transform(X)
         X_train, X_test, y_train, y_test = \
             train_test_split(X, y, test_size=.4, random_state=42)
 
