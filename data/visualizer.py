@@ -16,6 +16,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from features import features
+from beautifultable import BeautifulTable
 
 
 class Visualizer:
@@ -78,7 +79,7 @@ class Visualizer:
         ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright,
                    edgecolors='k')
         # Plot testing points
-        ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm_bright, alpha=0.6,
+        ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm_bright, alpha=.5,
                    edgecolors='k')
         ax.set_xlim(xx.min(), xx.max())
         ax.set_ylim(yy.min(), yy.max())
@@ -86,10 +87,16 @@ class Visualizer:
         ax.set_yticks(())
 
         # Iterate over classifiers
+        table = BeautifulTable()
+        table.column_headers = ["name", "score"]
         for name, clf in zip(names, classifiers):
             ax = plt.subplot(1, len(classifiers) + 1, plot_index)
             clf.fit(X_train, y_train)
             score = clf.score(X_test, y_test)
+
+
+            table.append_row([name, score])
+            #print("{0} Score: {1:.4%}".format(name, score))
 
             # Plot the decision boundary. For that, we will assign a color to each
             # point in the mesh [x_min, x_max]x[y_min, y_max].
@@ -97,7 +104,6 @@ class Visualizer:
                 Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
             else:
                 Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
-
             # Put the result into a color plot
             Z = Z.reshape(xx.shape)
             ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
@@ -107,7 +113,7 @@ class Visualizer:
                        edgecolors='k')
             # Plot testing points
             ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm_bright,
-                       edgecolors='k', alpha=0.6)
+                       edgecolors='k', alpha=.5)
 
             ax.set_xlim(xx.min(), xx.max())
             ax.set_ylim(yy.min(), yy.max())
@@ -117,6 +123,9 @@ class Visualizer:
             ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score).lstrip('0'),
                     size=15, horizontalalignment='right')
             plot_index += 1
+
+        # print score by classifier table
+        print(table)
 
         plt.suptitle('Classifiers comparison')
         plt.tight_layout(rect=[0, 0.03, 1, 0.9])
