@@ -24,14 +24,17 @@ class Visualizer:
         print("Init Visualizer class")
 
     def scatter_matrix(self, fname):
-        header = features.Features().get_header()
-        df = pd.read_csv(fname)
-        X = df[header[1::]]
-        y = df[header[0]]
-        cmap = cm.get_cmap('bwr')
-        scatter_matrix(X, c=y, marker='o', figsize=(9,9), cmap=cmap, diagonal='kde')
-        plt.suptitle('Scatter-matrix for each input feature')
-        plt.savefig('./views/scatter_matrix_for_dataset.png')
+        try:
+            header = features.Features().get_header()
+            df = pd.read_csv(fname)
+            X = df[header[1::]]
+            y = df[header[0]]
+            cmap = cm.get_cmap('bwr')
+            scatter_matrix(X, c=y, marker='o', figsize=(9,9), cmap=cmap, diagonal='kde')
+            plt.suptitle('Scatter-matrix for each input feature')
+            plt.savefig('./views/scatter_matrix_for_dataset.png')
+        except BaseException as e: # might trigger an singular matrix with many simulations
+            print("scatter matrix generation failed somewhere", e)
 
 
     def compare_classifiers(self, X, y):

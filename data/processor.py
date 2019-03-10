@@ -6,13 +6,13 @@ from features import features
 
 class Processor(data.Data):
 
-    def __init__(self, fname=None, options=None):
+    def __init__(self, fname=None, options=None, n=10):
         print("Init Processor class")
         data.Data.__init__(self, options)
         if fname is not None:
             self._load_dataset(fname)
         else:
-            self._generate_dataset(10)
+            self._generate_dataset(n)
             self._save_dataset()
 
     def _load_dataset(self, fname):
