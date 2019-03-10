@@ -9,6 +9,7 @@ class Features:
         return [label,
                 f.length.get(self._url),
                 f.daysSinceRegistration.get(self._url),
+                f.tld.get(self._url),
                 f.subdomains.get(self._url)]
 
     @staticmethod
@@ -16,4 +17,5 @@ class Features:
         return ['label',
                 'length',
                 'days_since_registration',
+                'russian_tld',
                 'subdomains']
