@@ -64,11 +64,6 @@ class Visualizer:
         X_train, X_test, y_train, y_test = \
             train_test_split(X, y, test_size=.4, random_state=42)
 
-        print("X_train",X_train.shape)
-        print("X_test",X_test.shape)
-        print("y_train",y_train.shape)
-        print("y_test",y_test.shape)
-
         x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
         y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
         xx, yy = np.meshgrid(np.arange(x_min, x_max, .02),
@@ -92,17 +87,11 @@ class Visualizer:
         ax.set_yticks(())
 
         # Iterate over classifiers
-        table = BeautifulTable()
-        table.column_headers = ["name", "score"]
         for name, clf in zip(names, classifiers):
             ax = plt.subplot(1, len(classifiers) + 1, plot_index)
             clf.fit(X_train, y_train)
-            # score is a shortcut to predict/calculate accuracy
             score = clf.score(X_test, y_test)
-
-
             table.append_row([name, score])
-            #print("{0} Score: {1:.4%}".format(name, score))
 
             # Plot the decision boundary. For that, we will assign a color to each
             # point in the mesh [x_min, x_max]x[y_min, y_max].
@@ -131,9 +120,37 @@ class Visualizer:
                     size=15, horizontalalignment='right')
             plot_index += 1
 
-        # print score by classifier table
-        print(table)
-
         plt.suptitle('Classifiers comparison')
         plt.tight_layout(rect=[0, 0.03, 1, 0.9])
         plt.savefig('./views/classifiers-comparison.png')
+
+    def compare_classifiers_text(self, X, y):
+        names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
+                 "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
+                 "Naive Bayes", "QDA"]
+
+        classifiers = [
+            KNeighborsClassifier(3),
+            SVC(kernel="linear", C=0.025),
+            SVC(gamma=2, C=1),
+            GaussianProcessClassifier(1.0 * RBF(1.0)),
+            DecisionTreeClassifier(max_depth=5),
+            RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+            MLPClassifier(alpha=1),
+            AdaBoostClassifier(),
+            GaussianNB(),
+            QuadraticDiscriminantAnalysis()]
+
+        X_train, X_test, y_train, y_test = \
+            train_test_split(X, y, test_size=.4, random_state=42)
+
+        table = BeautifulTable()
+        table.column_headers = ["name", "score"]
+        for name, clf in zip(names, classifiers):
+            clf.fit(X_train, y_train)
+            # score is a shortcut to predict/calculate accuracy
+            score = clf.score(X_test, y_test)
+            table.append_row([name, score])
+
+        # print score by classifier table
+        print(table)

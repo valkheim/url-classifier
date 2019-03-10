@@ -8,11 +8,8 @@ if __name__ == "__main__":
     #p = processor.Processor(fname=fname)
     p = processor.Processor()
     X, y = p.get()
-    print(X.shape)
-    print(X)
-    print(y.shape)
-    print(y)
     v = visualizer.Visualizer()
     v.scatter_matrix("./data/dataset.csv")
-    #v.compare_classifiers(X, y) # 2 dimensions, 2 features
+    #v.compare_classifiers(X, y) # 2 dimensions graph, only 2 features
+    v.compare_classifiers_text(X, y)
     print("Done.")
