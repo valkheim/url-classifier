@@ -4,19 +4,24 @@ import pandas as pd
 
 class Data:
 
-    # give what to init as paramter
-    def __init__(self):
+    _default_options = {"unsafe": True,
+                       "safe": True,
+                       "top-1m": True}
+
+    def __init__(self, options):
         print("Init Data class")
+        if options is None:
+            options = self._default_options
         self._data = {}
-        self._get_raw_datasets()
+        self._get_raw_datasets(options)
 
     def get_data(self):
         return self._data
 
-    def _get_raw_datasets(self):
-        self._get_unsafe_urls()
-        self._get_top_1_million()
-        self._get_safe_urls()
+    def _get_raw_datasets(self, options):
+        if options["unsafe"]: self._get_unsafe_urls()
+        if options["top-1m"]: self._get_top_1_million()
+        if options["safe"]: self._get_safe_urls()
 
     def _get_unsafe_urls(self):
         print("Retrieve unsafe urls database")
@@ -36,8 +41,15 @@ class Data:
         self._data["unsafe"] = df.iloc[:, 0].values
 
     def _get_safe_urls(self):
-        print("Retrieve safe urls database")
-        self._data["safe"] = list(self._data["top-1m"].keys())
+        try:
+            self._data["safe"] = list(self._data["top-1m"].keys())
+            print("Retrieve safe urls database")
+        except KeyError as e:
+            print("Cannot retrive safe urls database")
+            if str(e) == "'top-1m'":
+                print("Downloading top-1m dependancy and retry")
+                self._get_top_1_million()
+                self._get_safe_urls()
 
     def _get_top_1_million(self):
         print("Retrieve top 1 million websites database")

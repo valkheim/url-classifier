@@ -4,21 +4,21 @@ from features import features
 
 class Processor(data.Data):
 
-    def __init__(self, dataset_fname=None):
+    def __init__(self, fname=None, options=None):
         print("Init Processor class")
-        data.Data.__init__(self)
-        if dataset_fname:
-            print("Load dataset",dataset_fname)
+        data.Data.__init__(self, options)
+        if fname is not None:
+            self._load_dataset(fname)
         else:
             self._generate_dataset(100)
-        self._save_dataset()
+            self._save_dataset()
 
-        #next implems
-        #preprocess, sanitize, handle features.get() errors
-        #self._save_dataset() # write dataset to csv
-        #self._load_dataset() # load past dataset
+    def _load_dataset(self, fname):
+        print("Load dataset",fname)
+        self._df = pd.read_csv(fname)
 
     def _generate_dataset(self, size):
+        #preprocess, sanitize, handle features.get() errors
         """
             iterate through safe/unsafe lists of length 'size'
             calculate features scores
