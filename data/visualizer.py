@@ -14,7 +14,7 @@ from sklearn.gaussian_process.kernels import RBF
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis, LinearDiscriminantAnalysis
 from features import features
 from beautifultable import BeautifulTable
 
@@ -127,7 +127,7 @@ class Visualizer:
     def compare_classifiers_text(self, X, y):
         names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
                  "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
-                 "Naive Bayes", "QDA"]
+                 "Naive Bayes", "Linear discriminant analysis", "QDA"]
 
         classifiers = [
             KNeighborsClassifier(3),
@@ -139,6 +139,7 @@ class Visualizer:
             MLPClassifier(alpha=1),
             AdaBoostClassifier(),
             GaussianNB(),
+            LinearDiscriminantAnalysis(),
             QuadraticDiscriminantAnalysis()]
 
         X_train, X_test, y_train, y_test = \
