@@ -6,7 +6,7 @@ from features import top1m
 if __name__ == "__main__":
     fname = "./data/dataset.csv"
     #p = processor.Processor(fname=fname)
-    p = processor.Processor(n=50)
+    p = processor.Processor(n=10)
     X, y = p.get()
     v = visualizer.Visualizer()
     v.scatter_matrix("./data/dataset.csv")

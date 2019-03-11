@@ -150,11 +150,15 @@ class Visualizer:
 
         table = BeautifulTable()
         table.column_headers = ["name", "score"]
+        total = 0
         for name, clf in zip(names, classifiers):
             clf.fit(X_train, y_train)
             # score is a shortcut to predict/calculate accuracy
             score = clf.score(X_test, y_test)
             table.append_row([name, score])
+            total += score
 
         # print score by classifier table
+        total /= len(classifiers)
+        table.append_row(["Total", score])
         print(table)

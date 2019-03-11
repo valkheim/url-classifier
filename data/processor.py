@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from multiprocessing import Process, Manager
 from sklearn.preprocessing import StandardScaler
 from data import data
 from features import features
@@ -19,8 +20,12 @@ class Processor(data.Data):
         print("Load dataset",fname)
         self._df = pd.read_csv(fname)
 
+    def _get_features(self, dataset, balance, urls, label):
+        for url in urls[:balance]:
+            fn = features.Features(url)
+            dataset.append(fn.get(label))
+
     def _generate_dataset(self, size):
-        #preprocess, sanitize, handle features.get() errors
         """
             iterate through safe/unsafe lists of length 'size'
             calculate features scores
@@ -37,13 +42,17 @@ class Processor(data.Data):
         balance = unsafe.size if len(safe) > unsafe.size else len(safe)
         balance = size if balance > size else balance
         print("Generate url dataset of size 2 *", balance)
-        for url in unsafe[:balance]:
-            fn = features.Features(url)
-            dataset.append(fn.get(1))
-        for url in safe[:balance]:
-            fn = features.Features(url)
-            dataset.append(fn.get(0))
-        self._df = pd.DataFrame(dataset, columns=features.Features().get_header())
+
+        manager = Manager()
+        dataset = manager.list()
+        unsafe = Process(target=self._get_features, args=(dataset, balance, unsafe, 1))
+        safe = Process(target=self._get_features, args=(dataset, balance, safe, 0))
+        unsafe.start()
+        safe.start()
+        unsafe.join()
+        safe.join()
+
+        self._df = pd.DataFrame(list(dataset), columns=features.Features().get_header())
         # fix missing values
         self._df['days_since_registration'].fillna(self._df['days_since_registration'].mean(), inplace=True)
 
