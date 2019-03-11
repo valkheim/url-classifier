@@ -17,6 +17,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis, LinearDiscriminantAnalysis
 from features import features
 from beautifultable import BeautifulTable
+from multiprocessing import Process, Manager
 
 
 class Visualizer:
@@ -162,3 +163,41 @@ class Visualizer:
         total /= len(classifiers)
         table.append_row(["Total", score])
         print(table)
+
+    def _compute_clf(self, clf, name, X_train, X_test, y_train, y_test):
+        clf.fit(X_train, y_train)
+        ## score is a shortcut to predict/calculate accuracy
+        score = clf.score(X_test, y_test)
+        print(score, "\t", name)
+
+    def compare_classifiers_text_para(self, X, y):
+
+        names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
+                 "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
+                 "Naive Bayes", "Linear discriminant analysis", "QDA"]
+
+        processes = {}
+
+        classifiers = [
+            KNeighborsClassifier(3),
+            SVC(kernel="linear", C=0.025),
+            SVC(gamma=2, C=1),
+            GaussianProcessClassifier(1.0 * RBF(1.0)),
+            DecisionTreeClassifier(max_depth=5),
+            RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+            MLPClassifier(alpha=1),
+            AdaBoostClassifier(),
+            GaussianNB(),
+            LinearDiscriminantAnalysis(),
+            QuadraticDiscriminantAnalysis()]
+
+        X_train, X_test, y_train, y_test = \
+            train_test_split(X, y, test_size=.4, random_state=42)
+
+        print("-"*5+" Results "+"-"*(30-len(" Results ")))
+        for name, clf in zip(names, classifiers):
+            processes[name] = Process(target=self._compute_clf, args=(clf, name, X_train, X_test, y_train, y_test))
+            processes[name].start()
+        for name, clf in zip(names, classifiers):
+            processes[name].join()
+        print("-"*35)

@@ -63,8 +63,8 @@ class Processor(data.Data):
 
     def _preprocess(self, X, y):
         # Remove variable colineraity
-        # rng = np.random.RandomState(2)
-        # X += 2 * rng.uniform(size=X.shape)
+        rng = np.random.RandomState(2)
+        X += 2 * rng.uniform(size=X.shape)
         X = StandardScaler().fit_transform(X)
         return X, y
 
