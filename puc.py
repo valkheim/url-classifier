@@ -4,17 +4,16 @@ from data import *
 from features import top1m
 
 if __name__ == "__main__":
-    fname = "./data/dataset.csv"
-    #p = processor.Processor(fname=fname)
     d = data.Data()
     p = processor.Processor(n=10)
-    df = p.get_df()
-    X, y = p.get()
-    print(df)
     v = visualizer.Visualizer()
-    v.scatter_matrix(fname)
-    v.correlation_matrix(df)
-    #v.scatter_matrix_seaborn(df)
-    #v.compare_classifiers(X, y) # 2 dimensions graph, only 2 features
-    v.compare_classifiers_text_para(X, y)
+
+    X_sm, y_sm = p.prepare_for_scatter_matrix()
+    v.scatter_matrix(X_sm, y_sm)
+
+    df_cm = p.prepare_for_correlation_matrix()
+    v.correlation_matrix(df_cm)
+
+    X_clf, y_clf = p.prepare_for_classifiers()
+    v.compare_classifiers_text_para(X_clf, y_clf)
     print("Done.")

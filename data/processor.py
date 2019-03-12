@@ -16,14 +16,21 @@ class Processor(data.Data):
             self._generate_dataset(n)
             self._save_dataset()
 
-    def get_df(self):
-        return self._df
+    def prepare_for_correlation_matrix(self):
+        return self._df[self._df.columns.difference(['label'])]
 
-    def get(self):
+    def prepare_for_classifiers(self):
         header = features.Features().get_header()
         X = self._df[header[1::]].to_numpy().astype(float)
         y = self._df[header[0]].to_numpy().astype(float)
         return self._preprocess(X, y)
+
+    def prepare_for_scatter_matrix(self):
+        df = self._df + 0.00001 * np.random.rand(self._df.shape[0], self._df.shape[1]) # remove singularity
+        header = features.Features().get_header()
+        X = df[header[1::]]
+        y = df[header[0]]
+        return X, y
 
     def _load_dataset(self, fname):
         print("Load dataset",fname)
