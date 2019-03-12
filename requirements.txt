@@ -1,9 +1,9 @@
+matplotlib==3.0.3
+beautifultable==0.7.0
 pandas==0.24.1
+seaborn==0.9.0
 tldextract==2.2.1
 numpy==1.16.2
-beautifultable==0.7.0
 python_whois==0.7.1
-seaborn==0.9.0
-matplotlib==3.0.3
 scikit_learn==0.20.3
 whois==0.7

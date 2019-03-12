@@ -1,5 +1,6 @@
 \documentclass[conference,11pt]{IEEEtran}
 \usepackage{url}
+\usepackage{ulem}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -11,8 +12,8 @@
 
 \title{Example Paper for MSE and MSSF}
 
-\author{\IEEEauthorblockN{Sherlock Holmes}
-\IEEEauthorblockA{ID: 12345678}
+\author{\IEEEauthorblockN{Charles Paulet}
+\IEEEauthorblockA{ID: 18103197}
 \and
 \IEEEauthorblockN{John Watson}
 \IEEEauthorblockA{ID: 87654321}
@@ -23,72 +24,151 @@
 \maketitle
 
 \begin{abstract}
-This is an example of how \LaTeX\ can be used in the production of
-a paper for your practicum. This text is an abstract for the paper.
+This is the report of the first ca645 assignment. Our task is to research and
+implement a phishing URL classifier and to write a paper detailing your approach
+and findings. This is the paper.
 \end{abstract}
 
 \section{Introduction}
-This is the introduction to the paper that contains an overview of
-the work described in the paper.
+In this document, we will describe the goals of the project, how we achieved
+them, what difficulties we encountered and some suggestions for improvement.
 
-This is the second paragraph of the introduction.
+\section{The goals of the project}
+As previously written, the main goal is to research and implement a phishing URL
+classifier. The research step is of course necessary for the implementation one.
+We had some vague notions about machine learning but not as much as required by
+this project. In fact, we had only theoretical knowledge of the field, it was
+time for us to have a bit of practice. This project will also allow us to
+conduct an assignment as a pseudo-real research work.
 
-\subsection{First Sub-section}
-This is the first sub-section of the introduction.
+\section{Past experience in ML}
+We had a few notions of machine learning. Let's sum it up. Charles had some fun
+recently discovering multivariate statistics (PCA, LDA, \ldots) but nothing that
+revelant nor very handy for this task. Even if it's closely related. Pierre \ldots
+and Garçon gentil \ldots
 
-\subsection{Second Sub-section}
-This is the second sub-section of the introduction. Note how the
-sub-sections are numbered.
+\section{Our implementation}
+For our implementation, we choose to used Python as a language not because of
+its speed, memory consumption or runtime errors but because it was easy and fast
+for us to script and quickly test models while enjoying many machine learning
+frameworks. We decided to use scikit-learn because \sout{its Français} of its
+exhaustive documentation and its integration with other libraries like numpy,
+pandas and matplotlib. We indeed relied on those to manipulate and display data.
+From a technical point of view, we worked in test driven development especially
+while working on features to ensure a dependancy-less and long-lasting code but
+also to unitary test feature code and anticipate various kind of failure (some
+due to Python runtime politics (mostly dynamic typing and exceptions)). To
+ensure that the code will remain consistent and readable, we used pycodestyle, a
+PEP-8 compliant linter. We used Git as a version control system and Gitlab
+issues to discuss on the project.
 
-\section{Second Section}
-This is the the second section of the paper. It contains a number
-of random paragraphs.
+\subsection{Gathering data}
+We have a python package data that is responsible for gathering, saving and
+loading data.
 
-Lockers are available for allocation to students at registration.
-Due to the current shortage of lockers it will be necessary for
-students to share lockers. Due to problems of theft on campus all
-students are strongly advised to rent and use a locker.
+\subsection{Adding features}
+We began to add two simple feature before having the whole loop. We such began
+with the length (as advised) and the subdomain count features.
 
-A deposit of \euro 7 and rental \euro 7 are payable per student on
-collection of the key. The deposit element is refundable at the end
-of Semester II when your locker must be cleared and your key returned
-to the Estates Office. The deposit is only refundable two weeks after
-Semester II. The University may retain the deposit if your locker is
-not returned in good condition. If the contents of your locker are
-not cleared by July 1st of that year, it will be disposed of to a
-local charity.
+\subsection{Features}
+We will describe some of our features and the reason the they might be
+interesting. Of course, we should limit strong preconceptions among their
+ability to classify properly URLs. We tried to find features that have the most
+unique characteristics and such the greatest fingerprinting capabilities,
+whether it be for safe or unsafe URLs.
 
-If you should lose your key, replacements may be obtained from the
-Security Services Office. The charge for a replacement key is \euro
-4. Should you require more than five replacement keys in the course
-of the academic year you will be required to pay \euro 7 each for
-the sixth and for any further replacements. Please note that items
-must not be left on top of lockers as this presents an untidy
-appearance in the University. Such items will be removed on a daily
-basis and put in the Security Services Office.
+\subsubsection{length}
+Length may be a useful metric, shortest domain names are usually the most
+expensive, unless for new gTLDs.
+
+\subsubsection{subdomains}
+We can link an excessive amount of URLs to a particular domain thanks to the
+subdomain diversity. Subdomains are cheap to set up and manipulate. They can be
+used in a funny way with domain name (e.g. pay.pal.com ) which may lead to
+target misinterpretation.
+
+\subsubsection{TLD usage}
+Old domain names can not / generally not use new gTLDs. The .com popularity is
+nearly 50\% whereas the new .dev is still less than 1\%. There is a large gap
+that might feed our model properly.
+
+\subsection{days since registration of the domain}
+Here we have to use network I/O which is pretty slow, but we think the nature of
+the data worth it. We think that unsafe domains are newly registered (to be
+stealh or because older one had been detected ?).
+
+\subsection{Visualization}
+Selection of features. Quality over quantity
+
+\subsection{Classifiers}
+During our first steps in the project, we tried to behave like a classifier,
+asking ourselves how should we proceed to classify a URL between two states :
+safe or unsafe. As a human we can easily observe independant characteristics of
+an object. For a URL, we observed the length and the number of subdomains at
+first glance. These are independant characteristics that suggests a correlation:
+the more subdomains a URL have, the more it is long. As a human we can treat
+length characteristic as a conditional variable depending on subdomains, in
+mathematics, such reasoning is attributed to Thomas Bayes (and its Bayes'
+theorem). We found during our researches that we can use this theorem to
+classify data, it is known as the naive bayes classifier. It's a linear
+classifier based on applying Bayes' theorem with strong (naive) independance
+between observed characteristics (features). As we continued ou researches, we
+found that this kind of frequentialist approach (or Bayesian inferential
+approach) was not the only one and we quickly felt overwhelmed by all the common
+techniques for supervised classification problems. We discovered SVMs (%
+Support-vector machines) (another linear classifier), kNN technique (k-nearest
+neighbors algorithm), NN (neural network and derivates), decision trees and
+its agglomeration in random forets and some more. With only length and subdomain
+count as features, we were able to represent our training and testing datasets
+on a 2d graph, what we did. The figure \ref{classifiers-list} represents the
+different classifiers we tried over our dataset. The blue points corresponds to
+the unsafe URLs and the red ones to the safe ones. The semi-transparent points
+are the testing points and the plain ones, the training ones. The high accuracy
+is due to the fact that we use approximately 95\% of 1-subdomain safe URLs.
+Note that subdomains go from 1 to 3. However, it's interesting to visualize how
+these classifiers are splitting the 2D space. Visualization turned out to be
+very handy to detect problems with our datasets and to select the most appropriate
+features.
 
 \begin{figure}[!t]
-\centering
-\includegraphics[width=2.5in]{classifiers-comparison-length-subdomains}
-\caption{Example Figure}
-\label{fig}
+  \centering
+  \includegraphics[width=\linewidth]{classifiers-list}
+  \caption{Classifiers}
+  \label{classifiers-list}
 \end{figure}
 
-\section{Including Citations}
-Using BibTex it is easy to include citations to referenced works.
-For example, we can cite the single work on OSI \cite{OSI} or a
-number of works on common topic \cite{bellare04security,rfc2616,yi,SSL}.
-We can also arrange for the list of references to appear at the end of
-the paper.
+\section{Datasets}
+Over the time, we built two datasets for safe and unsafe URLs from various
+sources. Those datasets are dynamic and are updated whenever our sources are
+updating theirs. \\
+Unsafe URLs sources :
+\begin{itemize}
+  \item PhishTank project api
+\end{itemize}
+Safe URLs sources :
+\begin{itemize}
+  \item Alexa top 1 million websites
+\end{itemize}
 
-\section{Conclusions}
-Normally we finish a document with some conclusions.
+\section{Our performance}
 
-\section*{Acknowledgements}
+\section{Conclusion and future work}
+Strongest correlations
+From supervised to unsupervised work ?
+The training > prediction > refine loop
+open api
 
-And we may even include some acknowledgements.
+Future features :
+\begin{itemize}
+  \item Pagerank (api limitations)
+  \item Prohibited statuses in whois infos (registrant takes care of its domain)
+  \item count redirections
+  \item homoglyphs
+  \item typosquatting, hamming distance
+\end{itemize}
+\section{References}
 
 \bibliographystyle{abbrv}
-\bibliography{paper}
+\bibliography{report}
 
 \end{document}
