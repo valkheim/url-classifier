@@ -3,4 +3,5 @@ import tldextract
 
 # Russian tld ?
 def get(address):
-    return 1 if tldextract.extract(address) == "ru" else 0
+    cache_extract = tldextract.TLDExtract(cache_file="./data/tld.cache")
+    return 1 if cache_extract(address) == "ru" else 0
