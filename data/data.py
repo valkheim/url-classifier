@@ -6,9 +6,10 @@ class Data:
 
     _default_options = {"unsafe": True,
                        "safe": True,
-                       "top-1m": True}
+                       "top-1m": True,
+                       "tld-stats": True}
 
-    def __init__(self, options):
+    def __init__(self, options=None):
         print("Init Data class")
         if options is None:
             options = self._default_options
@@ -22,6 +23,19 @@ class Data:
         if options["unsafe"]: self._get_unsafe_urls()
         if options["top-1m"]: self._get_top_1_million()
         if options["safe"]: self._get_safe_urls()
+        if options["tld-stats"]: self._get_tld_stats()
+
+    def _get_tld_stats(self):
+        print("Retrieve tld stats database")
+
+        local = "./data/tld-stats.csv"
+        try:
+            Path(local).resolve(strict=True)
+            df = pd.read_csv(local, header=None)
+            self._data["tld-stats"] = dict(df.values)
+            print(self._data["tld-stats"])
+        except FileNotFoundError:
+            print("Cannot find", local)
 
     def _get_unsafe_urls(self):
         print("Retrieve unsafe urls database")
