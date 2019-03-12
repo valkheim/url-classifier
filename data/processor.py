@@ -32,7 +32,7 @@ class Processor(data.Data):
     def _get_features(self, dataset, balance, urls, label):
         for url in urls[:balance]:
             fn = features.Features(url)
-            dataset.append(fn.get(label))
+            dataset.append(fn.get(label, self._data))
 
     def _generate_dataset(self, size):
         """

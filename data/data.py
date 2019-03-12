@@ -33,7 +33,6 @@ class Data:
             Path(local).resolve(strict=True)
             df = pd.read_csv(local, header=None)
             self._data["tld-stats"] = dict(df.values)
-            print(self._data["tld-stats"])
         except FileNotFoundError:
             print("Cannot find", local)
 
