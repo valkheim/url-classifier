@@ -28,6 +28,7 @@ class Visualizer:
         try:
             header = features.Features().get_header()
             df = pd.read_csv(fname)
+            df = df + 0.00001 * np.random.rand(df.shape[0], df.shape[1]) # remove singularity
             X = df[header[1::]]
             y = df[header[0]]
             cmap = cm.get_cmap('bwr')

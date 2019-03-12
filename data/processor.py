@@ -16,6 +16,15 @@ class Processor(data.Data):
             self._generate_dataset(n)
             self._save_dataset()
 
+    def get_df(self):
+        return self._df
+
+    def get(self):
+        header = features.Features().get_header()
+        X = self._df[header[1::]].to_numpy().astype(float)
+        y = self._df[header[0]].to_numpy().astype(float)
+        return self._preprocess(X, y)
+
     def _load_dataset(self, fname):
         print("Load dataset",fname)
         self._df = pd.read_csv(fname)
@@ -67,9 +76,3 @@ class Processor(data.Data):
         X += 2 * rng.uniform(size=X.shape)
         X = StandardScaler().fit_transform(X)
         return X, y
-
-    def get(self):
-        header = features.Features().get_header()
-        X = self._df[header[1::]].to_numpy().astype(float)
-        y = self._df[header[0]].to_numpy().astype(float)
-        return self._preprocess(X, y)
