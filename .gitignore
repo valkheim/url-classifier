@@ -116,7 +116,14 @@ dmypy.json
 .pyre/
 
 # Custom
-data/*.csv
 views/*.png
 data/*.cache
 report/*.pdf
+report/*.aux
+data/FinalDataset/
+data/ISCXURL2016.zip
+data/dataset.csvdata/dataset.csv
+data/safe.csv
+data/top-1m.csv
+data/unsafe.csv
+data/dataset.csv

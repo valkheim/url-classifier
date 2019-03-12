@@ -4,7 +4,6 @@ from data import *
 from features import top1m
 
 if __name__ == "__main__":
-    d = data.Data()
     p = processor.Processor(n=10)
     v = visualizer.Visualizer()
 

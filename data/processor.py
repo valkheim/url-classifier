@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from itertools import islice
 from multiprocessing import Process, Manager
 from sklearn.preprocessing import StandardScaler
 from data import data
@@ -37,7 +38,8 @@ class Processor(data.Data):
         self._df = pd.read_csv(fname)
 
     def _get_features(self, dataset, balance, urls, label):
-        for url in urls[:balance]:
+        for row in islice(urls.itertuples(), balance):
+            url = row._1
             fn = features.Features(url)
             dataset.append(fn.get(label, self._data))
 

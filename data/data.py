@@ -1,5 +1,6 @@
-from pathlib import Path
+import zipfile, urllib.request, shutil
 import pandas as pd
+from pathlib import Path
 
 
 class Data:
@@ -20,8 +21,9 @@ class Data:
         return self._data
 
     def _get_raw_datasets(self, options):
+        if options["unsafe"] or options["safe"]: self._get_urls()
         if options["unsafe"]: self._get_unsafe_urls()
-        if options["top-1m"]: self._get_top_1_million()
+        if options["top-1m"]: self._get_safe_urls_top_1_million()
         if options["safe"]: self._get_safe_urls()
         if options["tld-stats"]: self._get_tld_stats()
 
@@ -36,36 +38,54 @@ class Data:
         except FileNotFoundError:
             print("Cannot find", local)
 
+    def _get_unsafe_urls_phishtank(self):
+        remote = "http://data.phishtank.com/data/online-valid.csv"
+        print("[UNSAFE] Retrive PhishTank database")
+        df = pd.read_csv(remote)
+        df = df[df['verified'] == 'yes']
+        df = df[df['online'] == 'yes']
+        return df.iloc[:, 1]
+
+    def _get_unsafe_urls_cybercrime(self):
+        print("[UNSAFE] Retrive CyberCrime database")
+        remote = "http://cybercrime-tracker.net/all.php"
+        return pd.read_csv(remote, header=None)
+
+    def _get_unsafe_urls_unb(self):
+        print("[UNSAFE] Retrive University of New Brunswick Canadian Institute for Cybersecurity database")
+        local = "./data/FinalDataset/URL/phishing_dataset.csv"
+        return pd.read_csv(local, header=None)
+
     def _get_unsafe_urls(self):
-        print("Retrieve unsafe urls database")
+        print("[UNSAFE] Retrieve unsafe urls database")
 
         local = "./data/unsafe.csv"
         try:
             Path(local).resolve(strict=True)
         except FileNotFoundError:
-            remote = "http://data.phishtank.com/data/online-valid.csv"
-            df = pd.read_csv(infile)
-            df = df[df['verified'] == 'yes']
-            df = df[df['online'] == 'yes']
-            df['url'].to_csv(remote, sep=',', encoding='utf-8',
-                             header=False, index=False)
+            df = self._get_unsafe_urls_phishtank()
+            df = df.append(self._get_unsafe_urls_cybercrime(), ignore_index=True)
+            df = df.append(self._get_unsafe_urls_unb(), ignore_index=True)
+            df.to_csv(local, sep=',', encoding='utf-8', header=None, index=False)
         else:
             df = pd.read_csv(local)
-        self._data["unsafe"] = df.iloc[:, 0].values
+        self._data["unsafe"] = df
 
-    def _get_safe_urls(self):
+    def _get_urls(self):
+        print("[SAFE|UNSAFE] Retrieve safe/unsafe urls database")
+
+        local = "./data/ISCXURL2016.zip"
         try:
-            self._data["safe"] = list(self._data["top-1m"].keys())
-            print("Retrieve safe urls database")
-        except KeyError as e:
-            print("Cannot retrive safe urls database")
-            if str(e) == "'top-1m'":
-                print("Downloading top-1m dependancy and retry")
-                self._get_top_1_million()
-                self._get_safe_urls()
+            Path(local).resolve(strict=True)
+        except FileNotFoundError:
+            remote = "https://iscxdownloads.cs.unb.ca/iscxdownloads/ISCX-URL-2016/ISCXURL2016.zip"
+            with urllib.request.urlopen(remote) as response, open(local, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+                with zipfile.ZipFile(local) as zf:
+                    zf.extractall("./data")
 
-    def _get_top_1_million(self):
-        print("Retrieve top 1 million websites database")
+    def _get_safe_urls_top_1_million(self):
+        print("[SAFE] Retrieve top 1 million websites database")
         local = "./data/top-1m.csv"
         try:
             Path(local).resolve(strict=True)
@@ -75,5 +95,25 @@ class Data:
             df.to_csv(local, sep=',', encoding='utf-8', header=None, index=False)
         else:
             df = pd.read_csv(local, header=None)
-
         self._data["top-1m"] = dict(map(reversed, dict(df.values).items()))
+        return df
+
+    def _get_safe_urls_unb(self):
+        print("[SAFE] Retrive University of New Brunswick Canadian Institute for Cybersecurity database")
+        local = "./data/FinalDataset/URL/Benign_list_big_final.csv"
+        return pd.read_csv(local, header=None)
+
+    def _get_safe_urls(self):
+        print("[SAFE] Retrieve safe urls database")
+
+        local = "./data/safe.csv"
+        try:
+            Path(local).resolve(strict=True)
+        except FileNotFoundError:
+            df = self._get_safe_urls_top_1_million()
+            df = df.iloc[:, 1]
+            df = df.append(self._get_safe_urls_unb(), ignore_index=True)
+            df.to_csv(local, sep=',', encoding='utf-8', header=None, index=False)
+        else:
+            df = pd.read_csv(local)
+        self._data["safe"] = df
