@@ -30,6 +30,7 @@ class Data:
     def _get_tld_stats(self):
         print("Retrieve tld stats database")
 
+        # remote https://w3techs.com/technologies/overview/top_level_domain/all
         local = "./data/tld-stats.csv"
         try:
             Path(local).resolve(strict=True)
