@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from pandas.plotting import scatter_matrix
@@ -38,6 +39,31 @@ class Visualizer:
         except BaseException as e: # might trigger an singular matrix with many simulations
             print("scatter matrix generation failed somewhere", e)
 
+    def correlation_matrix(self, df, size=10):
+        sns.set(style="white")
+
+        # Compute the correlation matrix on features
+        df.drop('label', axis=1, inplace=True)
+        corr = df.corr()
+        print("Correlation matrix on features")
+        print(corr.to_string())
+
+        # Generate a mask for the upper triangle
+        mask = np.zeros_like(corr, dtype=np.bool)
+        mask[np.triu_indices_from(mask)] = True
+
+        f, ax = plt.subplots(figsize=(11, 9))
+
+        cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+        sns_plot = sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
+                    square=True, linewidths=.5, cbar_kws={"shrink": .5})
+
+        sns_plot.set_title("Correlation matrix for each input (triangle shape)")
+        figure = sns_plot.get_figure()
+        figure.savefig('./views/correlation_matrix_for_dataset.png')
+
+
 
     def compare_classifiers(self, X, y):
         """
@@ -45,7 +71,6 @@ class Visualizer:
             transparent plots : testing plots
             non-transparent plots : training plots
         """
-        # parallelize !
         plot_index = 1
 
         names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
