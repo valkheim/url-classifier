@@ -120,6 +120,8 @@ views/*.png
 data/*.cache
 report/*.pdf
 report/*.aux
+report/*.bbl
+report/*.blg
 data/FinalDataset/
 data/ISCXURL2016.zip
 data/dataset.csvdata/dataset.csv
