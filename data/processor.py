@@ -17,6 +17,9 @@ class Processor(data.Data):
             self._generate_dataset(n)
             self._save_dataset()
 
+    def get_df(self):
+        return self._df
+
     def prepare_for_correlation_matrix(self):
         return self._df[self._df.columns.difference(['label'])]
 
@@ -59,7 +62,7 @@ class Processor(data.Data):
         safe = self.get_data()["safe"]
         balance = unsafe.size if len(safe) > unsafe.size else len(safe)
         balance = size if balance > size else balance
-        print("Generate url dataset of size 2 *", balance)
+        print("Computing features for 2 *", balance, "URLs")
 
         manager = Manager()
         dataset = manager.list()

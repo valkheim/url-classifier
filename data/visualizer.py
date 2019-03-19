@@ -27,6 +27,14 @@ class Visualizer:
     def __init__(self):
         print("Init Visualizer class")
 
+    def scatter_matrix_sns(self, df):
+        import seaborn as sns
+        sns.set(style="ticks")
+
+        #df = sns.load_dataset("iris")
+        sns.pairplot(df, hue="label")
+        figure = sns_plot.get_figure()
+        figure.savefig('out.png')
 
     def scatter_matrix(self, X, y):
         cmap = cm.get_cmap('bwr')

@@ -11,6 +11,7 @@ class Features:
                 f.daysSinceRegistration.get(self._url),
                 f.tld.get(self._url),
                 f.tld_stats.get(self._url, data),
+                f.is_ascii.get(self._url),
                 f.subdomains.get(self._url)]
 
     @staticmethod
@@ -20,4 +21,5 @@ class Features:
                 'days_since_registration',
                 'russian_tld',
                 'tld_usage',
+                'is_ascii',
                 'subdomains']
