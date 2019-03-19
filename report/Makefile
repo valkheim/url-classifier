@@ -1,9 +1,14 @@
+NAME := report
 CC := pdflatex
+REF := bibtex
 
 all: report
 
 report:
-	${CC} report.tex
+	${CC} ${NAME}
+	${REF} ${NAME}
+	${CC} ${NAME}
+	${CC} ${NAME}
 
 clean:
-	find . -regextype posix-awk -regex "(.*.pdf|.*.aux|.*.bib|.*.log)" -type f -delete
+	find . -regextype posix-awk -regex "(.*.pdf|.*.aux|.*.bbl|.*.blg|.*.log)" -type f -delete
