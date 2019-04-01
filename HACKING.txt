@@ -1,0 +1,32 @@
+Hacking on our project
+======================
+
+Here are some guidelines for hacking on our project.
+
+
+Adding Features
+---------------
+
+
+Loaded features are set in features/features.py Features code is in features/
+with one file per feature. Consider testing your feature. Feature must be as
+light as possible.
+
+
+Coding Style
+------------
+
+- Use the pycodestyle, pep8 linter.
+
+- Don't use tabs, editors are messing them up too easily. Increment unit is four
+spaces.
+
+
+Running Tests
+-------------
+
+Read the `/run_tests.sh` script.
+
+
+Change Log
+----------

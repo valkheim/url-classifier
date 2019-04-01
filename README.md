@@ -9,3 +9,12 @@ paper detailing your approach and findings.
 -  paper : `/misc/report.pdf`
 -  code : `/`, run it with `/run.sh`
 -  cover sheet : `"/misc/Declaration of Plagiarism.pdf"`
+
+## Project key points
+----
+
+-  you might need to install python package dependancies as listed in
+requirements.txt
+-  If using with no internet connection, you'll not be able to download the
+datasets
+-  Generated images are located in `views/`
